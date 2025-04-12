@@ -46,10 +46,11 @@ class Camera:
 
         self.rotation[0] = float(np.clip(self.rotation[0], -np.pi / 2, np.pi / 2))
 
-    def zoom_in(self, step=0.1):
-        forward, _, _ = self.get_direction_vectors()
-        self.position += forward * step
+    def zoom_in(self, factor=0.1):
+        self.zoom = min(self.zoom * (1 + factor), 5.0)
 
-    def zoom_out(self, step=0.1):
-        forward, _, _ = self.get_direction_vectors()
-        self.position -= forward * step
+    def zoom_out(self, factor=0.1):
+        self.zoom = max(self.zoom / (1 + factor), 0.3)
+
+    def reset_zoom(self):
+        self.zoom = 1.0

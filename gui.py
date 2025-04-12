@@ -26,13 +26,12 @@ def render_scene(surface, scene, camera, color=(255, 255, 255)):
             start, end = edge
             pygame.draw.line(surface, color, projected_points[start], projected_points[end], 1)
 
-    pygame.display.flip()
-
     font = pygame.font.SysFont("consolas", 20)
-    text = f"Camera: {camera.position.round(2)} | Rot: {camera.rotation.round(2)} | Zoom: {round(camera.zoom, 2)}"
+    text = f"Camera: {camera.position.round(2)} | Zoom: {round(camera.zoom, 2)}"
     info = font.render(text, True, (255, 255, 255))
-    text_bg = pygame.Surface((info.get_width() + 10, info.get_height() + 4))
-    text_bg.fill((0, 0, 0))
-    surface.blit(text_bg, (5, 5))
-    surface.blit(info, (10, 7))
-    surface.blit(info, (10, 10))
+    bg = pygame.Surface((info.get_width() + 10, info.get_height() + 6))
+    bg.set_alpha(100)
+    bg.fill((0, 0, 0))
+    surface.blit(bg, (5, 5))
+    surface.blit(info, (10, 8))
+    pygame.display.flip()

@@ -48,6 +48,7 @@ def main():
 
         if keys[pygame.K_z]:  camera.zoom_in(ZOOM_SPEED)
         if keys[pygame.K_c]:  camera.zoom_out(ZOOM_SPEED)
+        if keys[pygame.K_x]:  camera.reset_zoom()
 
         render_scene(screen, scene, camera)
 
