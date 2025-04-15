@@ -31,20 +31,22 @@ class Camera:
 
         return forward, right, up
 
-    def move(self, dx, dy, dz):
-        self.position += np.array([dx, dy, dz])
-
     def move_local(self, dx, dy, dz):
         forward, right, up = self.get_direction_vectors()
         self.position += right * dx + up * dy + forward * dz
 
-    def rotate(self, pitch, yaw, roll):
-        self.rotation += np.array([pitch, yaw, roll])
-
     def rotate_local(self, pitch, yaw, roll):
         self.rotation += np.array([pitch, yaw, roll])
-
         self.rotation[0] = float(np.clip(self.rotation[0], -np.pi / 2, np.pi / 2))
+
+    def roll_local(self, angle):
+        rx = tf.rotate_matrix_x(self.rotation[0])
+        ry = tf.rotate_matrix_y(self.rotation[1])
+        rotation_matrix = tf.combine_transforms(ry, rx)
+
+        forward = tf.apply_transform(np.array([0, 0, 1]), rotation_matrix)
+
+        self.rotation[2] += angle
 
     def zoom_in(self, factor=0.1):
         self.zoom = min(self.zoom * (1 + factor), 5.0)

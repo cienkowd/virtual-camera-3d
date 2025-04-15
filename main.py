@@ -43,8 +43,8 @@ def main():
 
         if keys[pygame.K_a]:      camera.rotate_local(0, -ROTATE_SPEED, 0)
         if keys[pygame.K_d]:      camera.rotate_local(0, ROTATE_SPEED, 0)
-        if keys[pygame.K_q]:      camera.rotate_local(-ROTATE_SPEED, 0, 0)
-        if keys[pygame.K_e]:      camera.rotate_local(ROTATE_SPEED, 0, 0)
+        if keys[pygame.K_q]:      camera.roll_local(-ROTATE_SPEED)
+        if keys[pygame.K_e]:      camera.roll_local(ROTATE_SPEED)
 
         if keys[pygame.K_z]:  camera.zoom_in(ZOOM_SPEED)
         if keys[pygame.K_c]:  camera.zoom_out(ZOOM_SPEED)
