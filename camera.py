@@ -11,13 +11,15 @@ class Camera:
     def get_view_matrix(self):
         s = tf.scale_matrix(self.zoom, self.zoom, self.zoom)
 
-        rx = tf.rotate_matrix_x(-self.rotation[0])
-        ry = tf.rotate_matrix_y(-self.rotation[1])
-        rz = tf.rotate_matrix_z(-self.rotation[2])
+        yaw = tf.rotate_matrix_y(-self.rotation[1])
+        pitch = tf.rotate_matrix_x(-self.rotation[0])
+        roll = tf.rotate_matrix_z(-self.rotation[2])
 
         t = tf.translate_matrix(-self.position[0], -self.position[1], -self.position[2])
 
-        return tf.combine_transforms(s, rz, ry, rx, t)
+        view_rotation = tf.combine_transforms(pitch, yaw, roll)
+
+        return tf.combine_transforms(s, view_rotation, t)
 
     def get_direction_vectors(self):
         rx = tf.rotate_matrix_x(self.rotation[0])
@@ -37,7 +39,6 @@ class Camera:
 
     def rotate_local(self, pitch, yaw, roll):
         self.rotation += np.array([pitch, yaw, roll])
-        self.rotation[0] = float(np.clip(self.rotation[0], -np.pi / 2, np.pi / 2))
 
     def roll_local(self, angle):
         rx = tf.rotate_matrix_x(self.rotation[0])
