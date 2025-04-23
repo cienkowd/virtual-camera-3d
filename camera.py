@@ -3,34 +3,21 @@ import transformations as tf
 
 
 class Camera:
-    def __init__(self, position=None, rotation=None, zoom=1.0):
+    def __init__(self, position=None, zoom=1.0):
         self.position = position if position is not None else np.array([0.0, 0.0, -5.0])
-        self.rotation = rotation if rotation is not None else np.array([0.0, 0.0, 0.0])
+        self.rotation_matrix = np.identity(4)
         self.zoom = zoom
 
     def get_view_matrix(self):
         s = tf.scale_matrix(self.zoom, self.zoom, self.zoom)
-
-        yaw = tf.rotate_matrix_y(-self.rotation[1])
-        pitch = tf.rotate_matrix_x(-self.rotation[0])
-        roll = tf.rotate_matrix_z(-self.rotation[2])
-
         t = tf.translate_matrix(-self.position[0], -self.position[1], -self.position[2])
-
-        view_rotation = tf.combine_transforms(pitch, yaw, roll)
-
-        return tf.combine_transforms(s, view_rotation, t)
+        rot = tf.inverse_matrix(self.rotation_matrix)
+        return tf.combine_transforms(s, rot, t)
 
     def get_direction_vectors(self):
-        rx = tf.rotate_matrix_x(self.rotation[0])
-        ry = tf.rotate_matrix_y(self.rotation[1])
-        rz = tf.rotate_matrix_z(self.rotation[2])
-        rotation_matrix = tf.combine_transforms(rz, ry, rx)
-
-        forward = tf.apply_transform(np.array([0, 0, 1]), rotation_matrix)
-        right = tf.apply_transform(np.array([1, 0, 0]), rotation_matrix)
-        up = tf.apply_transform(np.array([0, 1, 0]), rotation_matrix)
-
+        forward = tf.apply_transform(np.array([0, 0, 1]), self.rotation_matrix)
+        right = tf.apply_transform(np.array([1, 0, 0]), self.rotation_matrix)
+        up = tf.apply_transform(np.array([0, 1, 0]), self.rotation_matrix)
         return forward, right, up
 
     def move_local(self, dx, dy, dz):
@@ -38,16 +25,15 @@ class Camera:
         self.position += right * dx + up * dy + forward * dz
 
     def rotate_local(self, pitch, yaw, roll):
-        self.rotation += np.array([pitch, yaw, roll])
+        pitch_matrix = tf.rotate_matrix_x(pitch)
+        yaw_matrix = tf.rotate_matrix_y(yaw)
+        roll_matrix = tf.rotate_matrix_z(roll)
+        rotation_delta = tf.combine_transforms(roll_matrix, pitch_matrix, yaw_matrix)
+        self.rotation_matrix = self.rotation_matrix @ rotation_delta
 
     def roll_local(self, angle):
-        rx = tf.rotate_matrix_x(self.rotation[0])
-        ry = tf.rotate_matrix_y(self.rotation[1])
-        rotation_matrix = tf.combine_transforms(ry, rx)
-
-        forward = tf.apply_transform(np.array([0, 0, 1]), rotation_matrix)
-
-        self.rotation[2] += angle
+        roll_matrix = tf.rotate_matrix_z(angle)
+        self.rotation_matrix = self.rotation_matrix @ roll_matrix
 
     def zoom_in(self, factor=0.1):
         self.zoom = min(self.zoom * (1 + factor), 5.0)

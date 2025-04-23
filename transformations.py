@@ -64,3 +64,7 @@ def apply_perspective(point3d, d=1.0):
     if z <= 0.01:
         z = 0.01
     return np.array([x / z, y / z]) * d
+
+
+def inverse_matrix(matrix):
+    return np.linalg.inv(matrix)

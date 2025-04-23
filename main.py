@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 from camera import Camera
 from scene import Scene
@@ -47,7 +48,7 @@ def main():
         if keys[pygame.K_d]:      camera.rotate_local(0, ROTATE_SPEED, 0)
         if keys[pygame.K_q]:      camera.roll_local(ROTATE_SPEED)
         if keys[pygame.K_e]:      camera.roll_local(-ROTATE_SPEED)
-        if keys[pygame.K_r]:      camera.rotation[2] = 0.0
+        if keys[pygame.K_r]:      camera.rotation_matrix = np.identity(4)
 
         if keys[pygame.K_z]:  camera.zoom_in(ZOOM_SPEED)
         if keys[pygame.K_c]:  camera.zoom_out(ZOOM_SPEED)
