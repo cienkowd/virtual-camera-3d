@@ -5,11 +5,11 @@ from scene import Scene
 from objects.box import Box
 from gui import render_scene
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1200, 800
 FPS = 60
-MOVE_SPEED = 0.1
-ROTATE_SPEED = 0.02
-ZOOM_SPEED = 0.1
+MOVE_SPEED = 0.05
+ROTATE_SPEED = 0.01
+ZOOM_SPEED = 0.05
 
 
 def main():
