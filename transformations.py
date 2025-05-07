@@ -68,3 +68,15 @@ def apply_perspective(point3d, d=1.0):
 
 def inverse_matrix(matrix):
     return np.linalg.inv(matrix)
+
+
+def face_normal(v0, v1, v2):
+    a = v1 - v0
+    b = v2 - v0
+    normal = np.cross(a, b)
+    return normal / np.linalg.norm(normal)
+
+
+def distance_to_camera(face_vertices, camera_position):
+    center = np.mean(face_vertices, axis=0)
+    return np.linalg.norm(center - camera_position)

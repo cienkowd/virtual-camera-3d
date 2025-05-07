@@ -23,44 +23,33 @@ def render_scene(surface, scene, camera, color=(255, 255, 255)):
     surface.fill((0, 0, 0))
 
     view_matrix = camera.get_view_matrix()
+    faces_to_render = []
 
     for obj in scene.get_objects():
         vertices = obj.get_transformed_vertices()
-        edges = obj.get_edges()
+        faces = obj.get_faces()
+        face_colors = obj.get_face_colors()
 
-        projected_points = []
-        for v in vertices:
-            transformed = tf.apply_transform(v, view_matrix)
-            if transformed[2] <= 0.01:
-                projected_points.append(None)
+        for face_index, face in enumerate(faces):
+            face_vertices = [tf.apply_transform(vertices[i], view_matrix) for i in face]
+            if any(v[2] <= 0.01 for v in face_vertices):
                 continue
-            projected = tf.apply_perspective(transformed, d=camera.zoom)
 
-            scale = min(width, height)
-            screen_x = int(projected[0] * scale + width / 2)
-            screen_y = int(-projected[1] * scale + height / 2)
-            projected_points.append((screen_x, screen_y))
+            normal = tf.face_normal(face_vertices[0], face_vertices[1], face_vertices[2])
+            camera_vector = -face_vertices[0]
+            if np.dot(normal, camera_vector) >= 0:
+                continue  # Back-face culling
 
-        for edge in edges:
-            i1, i2 = edge
-            v1 = tf.apply_transform(vertices[i1], view_matrix)
-            v2 = tf.apply_transform(vertices[i2], view_matrix)
+            projected = [tf.apply_perspective(v, d=camera.zoom) for v in face_vertices]
+            screen_coords = [(int(p[0] * min(width, height) + width / 2),
+                              int(-p[1] * min(width, height) + height / 2)) for p in projected]
 
-            clipped = clip_line_z(np.array(v1), np.array(v2))
-            if clipped is None:
-                continue
-            c1, c2 = clipped
+            min_z = min(v[2] for v in face_vertices)
+            faces_to_render.append((min_z, screen_coords, face_colors[face_index]))
 
-            p1 = tf.apply_perspective(c1, d=camera.zoom)
-            p2 = tf.apply_perspective(c2, d=camera.zoom)
-
-            scale = min(width, height)
-            x1 = int(p1[0] * scale + width / 2)
-            y1 = int(-p1[1] * scale + height / 2)
-            x2 = int(p2[0] * scale + width / 2)
-            y2 = int(-p2[1] * scale + height / 2)
-
-            pygame.draw.line(surface, color, (x1, y1), (x2, y2), 1)
+    for _, points, color in sorted(faces_to_render, key=lambda x: x[0], reverse=True):
+        pygame.draw.polygon(surface, color, points, width=0)
+        pygame.draw.polygon(surface, (0, 0, 0), points, width=1)  # Optional outline for clarity
 
     font = pygame.font.SysFont("consolas", 20)
     text = f"Camera: {camera.position.round(2)} | Zoom: {round(camera.zoom, 2)}"

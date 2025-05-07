@@ -26,7 +26,14 @@ class Box:
         ]
 
         self.position = np.array(position if position is not None else [0.0, 0.0, 0.0])
-        self.color = color
+        self.face_colors = [
+            (255, 0, 0),  # front – czerwony
+            (0, 255, 0),  # back – zielony
+            (0, 0, 255),  # right – niebieski
+            (255, 255, 0),  # left – żółty
+            (0, 255, 255),  # top – cyan
+            (255, 0, 255)  # bottom – magenta
+        ]
 
     def get_transformed_vertices(self):
         t = tf.translate_matrix(*self.position)
@@ -37,3 +44,23 @@ class Box:
 
     def get_color(self):
         return self.color
+
+    def get_faces(self):
+        return [
+            [3, 2, 1, 0],  # front — poprawiona
+            [4, 5, 6, 7],  # back
+            [0, 4, 7, 3],  # right
+            [1, 2, 6, 5],  # left
+            [1, 5, 4, 0],  # top
+            [3, 7, 6, 2],  # bottom
+        ]
+
+    def get_face_colors(self):
+        return [
+            (255, 0, 0),  # front – czerwony
+            (0, 255, 0),  # back – zielony
+            (0, 0, 255),  # top – niebieski
+            (255, 255, 0),  # bottom – żółty
+            (0, 255, 255),  # right – cyan
+            (255, 0, 255),  # left – magenta
+        ]
