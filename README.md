@@ -4,9 +4,9 @@
 <div align="center">
 
 
-# VIRTUAL-CAMERA-3D
+# Virtual Camera 3D
 
-<em>Transform your perspective, explore limitless 3D worlds.</em>
+<em>Software 3D renderer with a movable virtual camera: perspective projection, transformations, zoom and face sorting. Python, Pygame, NumPy.</em>
 
 <!-- BADGES -->
 <img src="https://img.shields.io/github/last-commit/cienkowd/virtual-camera-3d?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
