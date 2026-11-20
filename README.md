@@ -6,7 +6,7 @@
 
 # Virtual Camera 3D
 
-<em>Software 3D renderer with a movable virtual camera: perspective projection, transformations, zoom and face sorting. Python, Pygame, NumPy.</em>
+<em>Software 3D renderer with a movable virtual camera: perspective projection, transformations, zoom and face sorting.</em>
 
 <!-- BADGES -->
 <img src="https://img.shields.io/github/last-commit/cienkowd/virtual-camera-3d?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
